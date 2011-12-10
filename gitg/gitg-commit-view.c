@@ -24,6 +24,7 @@
 #include <gtksourceview/gtksourcelanguagemanager.h>
 #include <gtksourceview/gtksourcestyleschememanager.h>
 #include <gtksourceview/gtksourcegutterrendererpixbuf.h>
+#include <gtkspell/gtkspell.h>
 #include <glib/gi18n.h>
 #include <string.h>
 #include <libgitg/gitg-commit.h>
@@ -1528,6 +1529,7 @@ gitg_commit_view_parser_finished (GtkBuildable *buildable,
 {
 	GtkSourceMarkAttributes *attrs;
 	GtkSourceGutter *gutter;
+	GError *error = NULL;
 
 	if (parent_iface.parser_finished)
 	{
@@ -1603,6 +1605,11 @@ gitg_commit_view_parser_finished (GtkBuildable *buildable,
 	                 self->priv->comment_view,
 	                 "right-margin-position",
 	                 G_SETTINGS_BIND_GET | G_SETTINGS_BIND_SET);
+	
+	if (!gtkspell_new_attach (GTK_TEXT_VIEW (self->priv->comment_view), NULL, &error)) {
+		g_warning ("Could not initialize spell checker: %s", error->message);
+		g_error_free (error);
+	}
 
 	self->priv->hscale_context = GTK_HSCALE (gtk_builder_get_object (builder, "hscale_context"));
 	gtk_range_set_value (GTK_RANGE (self->priv->hscale_context), 3);
