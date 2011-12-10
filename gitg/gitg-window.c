@@ -27,6 +27,7 @@
 #include <libgitg/gitg-config.h>
 #include <libgitg/gitg-ref.h>
 #include <libgitg/gitg-hash.h>
+#include <gtkspell/gtkspell.h>
 
 #include "config.h"
 
@@ -3541,12 +3542,19 @@ on_revision_tag_activate (GtkAction  *action,
 		GtkWidget *widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_tag"));
 
 		GtkToggleButton *toggle = GTK_TOGGLE_BUTTON (gtk_builder_get_object (builder, "check_button_sign"));
+		GtkTextView *message = GTK_TEXT_VIEW (gtk_builder_get_object (builder, "text_view_message"));
+		GError *error = NULL;
 
 		gboolean active;
 
 		active = g_settings_get_boolean (window->priv->hidden_settings,
 		                                 "sign-tag");
 		gtk_toggle_button_set_active (toggle, active);
+
+		if (!gtkspell_new_attach (message, NULL, &error)) {
+			g_warning ("Could not initialize spell checker: %s", error->message);
+			g_error_free (error);
+		}
 
 		gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (window));
 
