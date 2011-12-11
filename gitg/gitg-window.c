@@ -109,6 +109,7 @@ struct _GitgWindowPrivate
 	GSettings *state_settings;
 	GSettings *view_settings;
 	GSettings *history_settings;
+	GSettings *message_settings;
 	GSettings *hidden_settings;
 };
 
@@ -227,6 +228,12 @@ gitg_window_dispose (GObject *object)
 	{
 		g_object_unref (self->priv->history_settings);
 		self->priv->history_settings = NULL;
+	}
+
+	if (self->priv->message_settings)
+	{
+		g_object_unref (self->priv->message_settings);
+		self->priv->message_settings = NULL;
 	}
 
 	if (self->priv->hidden_settings)
@@ -1204,6 +1211,7 @@ gitg_window_init (GitgWindow *self)
 	self->priv->state_settings = g_settings_new ("org.gnome.gitg.state.window");
 	self->priv->view_settings = g_settings_new ("org.gnome.gitg.preferences.view.main");
 	self->priv->history_settings = g_settings_new ("org.gnome.gitg.preferences.view.history");
+	self->priv->message_settings = g_settings_new ("org.gnome.gitg.preferences.commit.message");
 	self->priv->hidden_settings = g_settings_new ("org.gnome.gitg.preferences.hidden");
 }
 
@@ -3546,12 +3554,14 @@ on_revision_tag_activate (GtkAction  *action,
 		GError *error = NULL;
 
 		gboolean active;
+		gboolean is_spell_checker_enabled = g_settings_get_boolean (window->priv->message_settings,
+									    "enable-spell-checker");
 
 		active = g_settings_get_boolean (window->priv->hidden_settings,
 		                                 "sign-tag");
 		gtk_toggle_button_set_active (toggle, active);
 
-		if (!gtkspell_new_attach (message, NULL, &error)) {
+		if (is_spell_checker_enabled && !gtkspell_new_attach (message, NULL, &error)) {
 			g_warning ("Could not initialize spell checker: %s", error->message);
 			g_error_free (error);
 		}

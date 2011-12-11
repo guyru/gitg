@@ -94,6 +94,14 @@
         preference is set to TRUE.
       </_description>
     </key>
+    <key name="enable-spell-checker" type="b">
+      <default>true</default>
+      <_summary>Enable Spell Checker</_summary>
+      <_description>
+        Enable spell checking of commit messages.
+        This also applies to tag messages.
+      </_description>
+    </key>
   </schema>
   <schema gettext-domain="@GETTEXT_PACKAGE@" id="org.gnome.gitg.preferences.diff" path="/org/gnome/gitg/preferences/diff/">
     <key name="external" type="b">

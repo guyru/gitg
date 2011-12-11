@@ -67,6 +67,7 @@ struct _GitgPreferencesDialogPrivate
 	GtkCheckButton *check_button_show_right_margin;
 	GtkLabel *label_right_margin;
 	GtkSpinButton *spin_button_right_margin;
+	GtkCheckButton *check_button_enable_spell_checker;
 
 	GtkCheckButton *check_button_external_diff;
 
@@ -304,6 +305,12 @@ initialize_view(GitgPreferencesDialog *dialog)
 	                 "value",
 	                 G_SETTINGS_BIND_GET | G_SETTINGS_BIND_SET);
 
+	g_settings_bind (dialog->priv->message_settings,
+	                 "enable-spell-checker",
+	                 dialog->priv->check_button_enable_spell_checker,
+	                 "active",
+	                 G_SETTINGS_BIND_GET | G_SETTINGS_BIND_SET);
+
 	g_settings_bind_with_mapping (dialog->priv->view_settings,
 	                              "layout-vertical",
 	                              dialog->priv->main_layout_vertical,
@@ -347,6 +354,7 @@ create_preferences_dialog()
 	priv->check_button_show_right_margin = GTK_CHECK_BUTTON(gtk_builder_get_object(b, "check_button_show_right_margin"));
 	priv->label_right_margin = GTK_LABEL(gtk_builder_get_object(b, "label_right_margin"));
 	priv->spin_button_right_margin = GTK_SPIN_BUTTON(gtk_builder_get_object(b, "spin_button_right_margin"));
+	priv->check_button_enable_spell_checker = GTK_CHECK_BUTTON(gtk_builder_get_object(b, "check_button_enable_spell_checker"));
 
 	priv->check_button_external_diff = GTK_CHECK_BUTTON (gtk_builder_get_object (b, "check_button_external_diff"));
 

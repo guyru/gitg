@@ -1530,6 +1530,7 @@ gitg_commit_view_parser_finished (GtkBuildable *buildable,
 	GtkSourceMarkAttributes *attrs;
 	GtkSourceGutter *gutter;
 	GError *error = NULL;
+	gboolean is_spell_checker_enabled;
 
 	if (parent_iface.parser_finished)
 	{
@@ -1606,7 +1607,9 @@ gitg_commit_view_parser_finished (GtkBuildable *buildable,
 	                 "right-margin-position",
 	                 G_SETTINGS_BIND_GET | G_SETTINGS_BIND_SET);
 	
-	if (!gtkspell_new_attach (GTK_TEXT_VIEW (self->priv->comment_view), NULL, &error)) {
+	is_spell_checker_enabled = g_settings_get_boolean (self->priv->message_settings,
+		                                           "enable-spell-checker");
+	if (is_spell_checker_enabled && !gtkspell_new_attach (GTK_TEXT_VIEW (self->priv->comment_view), NULL, &error)) {
 		g_warning ("Could not initialize spell checker: %s", error->message);
 		g_error_free (error);
 	}
