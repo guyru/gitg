@@ -482,7 +482,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="check_button_enable_spell_checker">
-                                <property name="label" translatable="yes">Enable spell checker (requires a restart)</property>
+                                <property name="label" translatable="yes">Enable spell checking for commit and tag messages</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>

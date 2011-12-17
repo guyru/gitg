@@ -3561,7 +3561,8 @@ on_revision_tag_activate (GtkAction  *action,
 		                                 "sign-tag");
 		gtk_toggle_button_set_active (toggle, active);
 
-		if (is_spell_checker_enabled && !gtkspell_new_attach (message, NULL, &error)) {
+		if (is_spell_checker_enabled && !gtkspell_new_attach (message, NULL, &error))
+		{
 			g_warning ("Could not initialize spell checker: %s", error->message);
 			g_error_free (error);
 		}

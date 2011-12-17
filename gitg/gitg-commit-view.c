@@ -737,6 +737,38 @@ staged_selection_changed (GtkTreeSelection *selection,
 	g_object_unref (file);
 }
 
+static void
+spell_checker_changed (GSettings *settings,
+                       char      *key,
+		       GitgCommitView *self)
+{
+	GError *error = NULL;
+	gboolean is_spell_checker_enabled;
+	GtkSpell *spell_obj;
+
+
+
+	is_spell_checker_enabled = g_settings_get_boolean (self->priv->message_settings,
+		                                           "enable-spell-checker");
+	spell_obj = gtkspell_get_from_text_view (GTK_TEXT_VIEW (self->priv->comment_view));
+
+	if (is_spell_checker_enabled && !spell_obj)
+	{
+		// The spell checker is enabled, but no GtkSpell object is attached
+		if (!gtkspell_new_attach (GTK_TEXT_VIEW (self->priv->comment_view), NULL, &error))
+		{
+			g_warning ("Could not initialize spell checker: %s", error->message);
+			g_error_free (error);
+		}
+	}
+	else if (!is_spell_checker_enabled && spell_obj)
+	{
+		// The spell checker is disabled, but there is a GtkSpell object attached
+		gtkspell_detach (spell_obj);
+	}
+
+}
+
 static gint
 compare_by_name (GtkTreeModel *model,
                  GtkTreeIter  *a,
@@ -1607,9 +1639,14 @@ gitg_commit_view_parser_finished (GtkBuildable *buildable,
 	                 "right-margin-position",
 	                 G_SETTINGS_BIND_GET | G_SETTINGS_BIND_SET);
 	
+	g_signal_connect (self->priv->message_settings,
+	                  "changed::enable-spell-checker",
+	                  G_CALLBACK (spell_checker_changed),
+	                  self);
 	is_spell_checker_enabled = g_settings_get_boolean (self->priv->message_settings,
 		                                           "enable-spell-checker");
-	if (is_spell_checker_enabled && !gtkspell_new_attach (GTK_TEXT_VIEW (self->priv->comment_view), NULL, &error)) {
+	if (is_spell_checker_enabled && !gtkspell_new_attach (GTK_TEXT_VIEW (self->priv->comment_view), NULL, &error))
+	{
 		g_warning ("Could not initialize spell checker: %s", error->message);
 		g_error_free (error);
 	}
